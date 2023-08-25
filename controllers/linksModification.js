@@ -1,7 +1,6 @@
 const Links = require("../models/links");
 const CustomError = require("../errors/custom-error");
-
-const { StatusCodes } = require("http-status-codes");
+const {StatusCodes} = require('http-status-codes')
 
 // Get all the links objects
 const getLinks = async (req, res) => {
@@ -11,7 +10,7 @@ const getLinks = async (req, res) => {
       "Could not get all the data. Please try again later",
       StatusCodes.INTERNAL_SERVER_ERROR
     );
-  res.status(StatusCodes.OK).json(allLinks);
+  res.status(200).json(allLinks);
 };
 
 // Create a new entry
@@ -31,8 +30,9 @@ const createLink = async (req, res) => {
 // Lookup the specific data
 const getLink = async (req, res) => {
   const linkID = req.params.id;
+  
   if (!linkID)
-    throw new CustomError("No object ID defined.", StatusCodes.BAD_REQUEST);
+    throw new CustomError("No object ID defined.", 404);
 
   const linkObj = await Links.findById(linkID);
   if (!linkObj)
