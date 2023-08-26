@@ -26,13 +26,14 @@ const createLink = async (req, res) => {
     throw new CustomError("Please enter valid URL", StatusCodes.BAD_REQUEST);
 
   let isIdUnique = true;
-  let urlId = '';
-  while(isIdUnique) {
-    urlId =  new ShortUniqueId({ length: 7 })();
+  let urlId = true;
+
+  while (isIdUnique) {
+    urlId = new ShortUniqueId({ length: 7 })();
     isIdUnique = await Links.findOne({ urlId })
   }
-  req.body.urlId =  urlId;
-  
+  req.body.urlId = urlId;
+
   const entry = await Links.create(req.body);
 
   if (!entry)
@@ -56,7 +57,7 @@ const updateLink = async (req, res) => {
       StatusCodes.BAD_REQUEST
     );
 
-  console.log(newUrl);
+
 
   if (!isValidURL(newUrl))
     throw new CustomError("Please enter valid URL", StatusCodes.BAD_REQUEST);
@@ -64,10 +65,7 @@ const updateLink = async (req, res) => {
   let urlObj = await Links.findOneAndUpdate(
     { urlId: urlId },
     { originalUrl: newUrl },
-    {
-      new: true,
-      runValidators: true,
-    }
+    { new: true, runValidators: true }
   );
 
   if (!urlObj)
@@ -75,7 +73,6 @@ const updateLink = async (req, res) => {
       `Could not update the entry with the id ${urlId}. Please try again later!`,
       StatusCodes.INTERNAL_SERVER_ERROR
     );
-
   res.status(StatusCodes.OK).json(urlObj);
 };
 
@@ -89,14 +86,14 @@ const removeLink = async (req, res) => {
       StatusCodes.BAD_REQUEST
     );
 
-  const urlObj = await Links.findOneAndDelete({ urlId: urlId });
+  const urlObj = await Links.findOneAndDelete({ urlId });
   if (!urlObj)
     throw new CustomError(
       `Could not delete the entry with the id ${urlId}. Please try again later. `,
       StatusCodes.INTERNAL_SERVER_ERROR
     );
   res
-    .status(StatusCodes.OK)
+    .status(StatusCodes.ACCEPTED)
     .json(
       `Removed the entry with original url ${urlObj.originalUrl} and short url ${urlObj.shortenedUrl}}`
     );

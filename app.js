@@ -11,11 +11,11 @@ connectDB();
 
 app.use(express.json());
 
-const linkRouter = require("./routes/linkRoutes");
 const userRouter = require("./routes/userRouter");
+const publicRouter = require("./routes/publicRouter");
 
-app.use("/user", linkRouter);
-app.use("/", userRouter);
+app.use("/user", userRouter);
+app.use("/", publicRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

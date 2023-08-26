@@ -1,18 +1,13 @@
-const mongoose = require('mongoose');
-const express = require('express');
-const CustomError = require('../errors/custom-error');
-const Link = require('../models/links');
+const express = require("express");
+const {
+  getLinks,
+  createLink,
+  updateLink,
+  removeLink,
+} = require("../controllers/linksModification");
+
 const router = express.Router();
 
-router.get('/:id', async(req, res) => {
-
-    const urlId = req.params.id;
-    const urlData = await Link.findOne({urlId })
-    if(!urlData ) {
-        throw new CustomError('Invalid Url, Please check your URL', 404)
-    }
-    res.status(302).redirect(urlData.originalUrl);
-
-})
-
-module.exports = router
+router.route("/").get(getLinks).post(createLink); //need to update getLinks as soon as we have Auth configured 
+router.route("/:id").patch(updateLink).delete(removeLink); //need to update patch(updateLink).delete(removeLink) as soon as we have Auth configured 
+module.exports = router;
