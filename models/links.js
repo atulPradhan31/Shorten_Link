@@ -2,14 +2,20 @@ const mongoose = require("mongoose");
 
 const LinksSchema = new mongoose.Schema(
   {
-    originalLink: {
+    originalUrl: {
       type: String,
-      required: [true, "Please provide the original link"],
+      required: [true, "Please provide the original url"],
+      trim: true,
     },
 
-    shortenedLink: {
+    shortenedUrl: {
       type: String,
-      required: [true, "Please provide the shortened link"],
+      required: [true, "Please provide the shortened url"],
+    },
+
+    urlId: {
+      type: String,
+      required: [true, "Please provide the unique url id"],
     },
   },
   { timestamps: true }
