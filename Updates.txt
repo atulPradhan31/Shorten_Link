@@ -1,0 +1,15 @@
+Please add all your chances here 
+
+
+26-08
+-------
+- Update Port number ( please change accoding to yours )
+- update AppJs ( Changed route to /user from /homepage, migrate connectDB code to ConnectDB.js )
+- update connectDB
+- update linkRoutes
+    - delete getLink as it now migrate to userRoute
+    - Changed createLink 
+- update link model
+    - comment required for shortend link ( Because we are anyway going to find using Uid that is already present? whats your thought? )
+
+- Add new route userRoute ( Will handle all redirects links )

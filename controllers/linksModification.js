@@ -19,16 +19,20 @@ const getLinks = async (req, res) => {
 
 // Create a new entry
 const createLink = async (req, res) => {
+
   const origUrl = req.body.originalUrl;
+
   if (!origUrl || !isValidURL(origUrl))
     throw new CustomError("Please enter valid URL", StatusCodes.BAD_REQUEST);
 
-  const uid = new ShortUniqueId({ length: 16 })();
-  const shortenedUrl = `${uid}`;
-
-  req.body.shortenedUrl = shortenedUrl;
-  req.body.urlId = uid;
-
+  let isIdUnique = true;
+  let urlId = '';
+  while(isIdUnique) {
+    urlId =  new ShortUniqueId({ length: 7 })();
+    isIdUnique = await Links.findOne({ urlId })
+  }
+  req.body.urlId =  urlId;
+  
   const entry = await Links.create(req.body);
 
   if (!entry)
@@ -40,21 +44,6 @@ const createLink = async (req, res) => {
   res.status(StatusCodes.CREATED).json(entry);
 };
 
-// Lookup the specific data
-const getLink = async (req, res) => {
-  const urlId = req.params.id;
-  if (!urlId)
-    throw new CustomError("No object ID defined.", StatusCodes.BAD_REQUEST);
-
-  const urlObj = await Links.findOne({ urlId: urlId });
-  if (!urlObj)
-    throw new CustomError(
-      `No data found with the id ${urlId}`,
-      StatusCodes.NOT_FOUND
-    );
-
-  res.status(StatusCodes.OK).json(urlObj);
-};
 
 // Update the existing entry with new data
 const updateLink = async (req, res) => {
@@ -116,7 +105,6 @@ const removeLink = async (req, res) => {
 module.exports = {
   getLinks,
   createLink,
-  getLink,
   updateLink,
   removeLink,
 };

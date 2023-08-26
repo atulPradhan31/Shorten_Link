@@ -10,12 +10,13 @@ const LinksSchema = new mongoose.Schema(
 
     shortenedUrl: {
       type: String,
-      required: [true, "Please provide the shortened url"],
+      // required: [true, "Please provide the shortened url"],
     },
 
     urlId: {
       type: String,
       required: [true, "Please provide the unique url id"],
+      unique : true
     },
   },
   { timestamps: true }

@@ -1,0 +1,38 @@
+
+1. User of user ( actual who click link )
+    => Redirect -> Only get
+    => "/:id" 
+
+2. User ( Who will create account, customize and create link)
+    => Get, update, delete, post
+    => "/users 
+
+3. Auth
+    => Post : Create User
+    => Post : Login User 
+    => Post : Logout User
+    => Patch : Update password,
+    => Patch : Forget password
+    => Get : isLogged In
+    => Get : Get Profile Data ( eg : Email, Name ...)
+
+
+----------------------------------------------------------------
+``````````  DashBord Design for user `````````````
+----------------------------------------------------------------
+
+1. View all the Links created by User
+2. View all the Link Data: ( eg : Number of clicks on perticular link)
+3. Option to update desired Link Name : ( update UUID )
+4. Option to delete link
+5. Option to show Under maintenance
+4. Please add more.. 
+
+
+
+
+
+
+
+
+
