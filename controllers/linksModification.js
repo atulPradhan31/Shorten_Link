@@ -1,5 +1,8 @@
+require("dotenv").config();
 const Links = require("../models/links");
 const CustomError = require("../errors/custom-error");
+const ShortUniqueId = require("short-unique-id");
+const isValidURL = require("../modules/validation");
 
 const { StatusCodes } = require("http-status-codes");
 
@@ -16,79 +19,97 @@ const getLinks = async (req, res) => {
 
 // Create a new entry
 const createLink = async (req, res) => {
-  const body = req.body;
-  if (!body)
-    throw new CustomError("Please enter valid data", StatusCodes.BAD_REQUEST);
+  const origUrl = req.body.originalUrl;
+  if (!origUrl || !isValidURL(origUrl))
+    throw new CustomError("Please enter valid URL", StatusCodes.BAD_REQUEST);
+
+  const uid = new ShortUniqueId({ length: 16 })();
+  const shortenedUrl = `${uid}`;
+
+  req.body.shortenedUrl = shortenedUrl;
+  req.body.urlId = uid;
+
   const entry = await Links.create(req.body);
+
   if (!entry)
     throw new CustomError(
       "Could not create the entry. Please try again later",
       StatusCodes.INTERNAL_SERVER_ERROR
     );
-  res.status(StatusCodes.OK).json(entry);
+
+  res.status(StatusCodes.CREATED).json(entry);
 };
 
 // Lookup the specific data
 const getLink = async (req, res) => {
-  const linkID = req.params.id;
-  if (!linkID)
+  const urlId = req.params.id;
+  if (!urlId)
     throw new CustomError("No object ID defined.", StatusCodes.BAD_REQUEST);
 
-  const linkObj = await Links.findById(linkID);
-  if (!linkObj)
+  const urlObj = await Links.findOne({ urlId: urlId });
+  if (!urlObj)
     throw new CustomError(
-      `No object found with the id ${linkID}`,
+      `No data found with the id ${urlId}`,
       StatusCodes.NOT_FOUND
     );
 
-  res.status(StatusCodes.OK).json(linkObj);
+  res.status(StatusCodes.OK).json(urlObj);
 };
 
 // Update the existing entry with new data
 const updateLink = async (req, res) => {
-  const linkID = req.params.id;
-  const body = req.body;
+  const urlId = req.params.id;
+  const newUrl = req.body.originalUrl;
 
-  if (!body || !linkID)
+  if (!urlId || !newUrl)
     throw new CustomError(
-      "Data entry missing. Please enter complete data. ",
+      "Data entry incomplete. Please enter complete data. ",
       StatusCodes.BAD_REQUEST
     );
 
-  let linkObj = await Links.findByIdAndUpdate(linkID, body, {
-    new: true,
-    runValidators: true,
-  });
+  console.log(newUrl);
 
-  if (!linkObj)
+  if (!isValidURL(newUrl))
+    throw new CustomError("Please enter valid URL", StatusCodes.BAD_REQUEST);
+
+  let urlObj = await Links.findOneAndUpdate(
+    { urlId: urlId },
+    { originalUrl: newUrl },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  if (!urlObj)
     throw new CustomError(
-      `Could not update the entry with the id ${linkID}. Please try again later!`,
+      `Could not update the entry with the id ${urlId}. Please try again later!`,
       StatusCodes.INTERNAL_SERVER_ERROR
     );
 
-  res.status(StatusCodes.OK).json(linkObj);
+  res.status(StatusCodes.OK).json(urlObj);
 };
 
 // Lookup and delete the entry corresponding to the requested object Id.
 const removeLink = async (req, res) => {
-  const linkID = req.params.id;
+  const urlId = req.params.id;
 
-  if (!linkID)
+  if (!urlId)
     throw new CustomError(
-      "No object ID entered. Please enter the id. ",
+      "No url Id entered. Please enter an id. ",
       StatusCodes.BAD_REQUEST
     );
 
-  const linkObj = await Links.findByIdAndDelete(linkID);
-  if (!linkObj)
+  const urlObj = await Links.findOneAndDelete({ urlId: urlId });
+  if (!urlObj)
     throw new CustomError(
-      `Could not delete the entry with the id ${linkID}. Please try again later. `,
+      `Could not delete the entry with the id ${urlId}. Please try again later. `,
       StatusCodes.INTERNAL_SERVER_ERROR
     );
   res
     .status(StatusCodes.OK)
     .json(
-      `Removed the link with original link ${linkObj.originalLink} and short link ${linkObj.shortenedLink}}`
+      `Removed the entry with original url ${urlObj.originalUrl} and short url ${urlObj.shortenedUrl}}`
     );
 };
 
