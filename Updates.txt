@@ -1,6 +1,12 @@
 Please add all your chances here 
 
+27-08
+---------------------------------------------------------
+- Added a route for Login, Register
+- Added function for login, register and dashboard
+- Added user data to database
 
+---------------------------------------------------------
 26-08
 -------
 - Update Port number ( please change accoding to yours )
@@ -13,3 +19,5 @@ Please add all your chances here
     - comment required for shortend link ( Because we are anyway going to find using Uid that is already present? whats your thought? )
 
 - Add new route userRoute ( Will handle all redirects links )
+
+
