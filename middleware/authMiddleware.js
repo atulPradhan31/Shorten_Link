@@ -10,20 +10,22 @@ const authHandlerMiddleware = async (req, res, next) => {
     throw new CustomError("No valid token provided", StatusCodes.UNAUTHORIZED);
 
   const token = authorization.split(" ")[1];
-
+ 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const { id, userEmail, userName } = decoded;
 
-    const user = await User.findOne({ email: userEmail });
+    const { userId } = decoded;
+
+    const user = await User.findById(userId);
     if (!user)
       throw new CustomError(
         "No user available with this email address. ",
         StatusCodes.UNAUTHORIZED
       );
-
-    req.user = { id, userEmail, userName };
+    req.user = user;
+    req.token  = token;
     next();
+
   } catch (error) {
     throw new CustomError(
       "Not authorised to access this route",

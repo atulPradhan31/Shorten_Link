@@ -11,6 +11,7 @@
     => Post : Create User
     => Post : Login User 
     => Post : Logout User
+    => Post : Send Confirmation Email ( We can use freely-Email hehehe : https://www.npmjs.com/package/freely-email)
     => Patch : Update password,
     => Patch : Forget password
     => Get : isLogged In

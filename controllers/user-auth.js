@@ -1,11 +1,10 @@
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const CustomError = require("../errors/custom-error");
 const { StatusCodes } = require("http-status-codes");
-const bcrypt = require("bcryptjs");
 
 const register = async (req, res) => {
+
   const { name, email, password } = req.body;
   if (!name || !email || !password)
     throw new CustomError(
@@ -13,23 +12,19 @@ const register = async (req, res) => {
       StatusCodes.BAD_REQUEST
     );
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  const user = await User.create({ name, email, password: hashedPassword });
+  const user = await User.create({ name, email, password });
   if (!user)
     throw new CustomError(
       "Could not creat user entry. Please try again later",
       StatusCodes.INTERNAL_SERVER_ERROR
     );
+  const token = user.generateToken();
 
-  const token = jwt.sign(
-    { userId: user._id, userEmail: user.email, userName: user.name },
-    process.env.JWT_SECRET,
-    { expiresIn: "10d" }
-  );
   res.status(200).json({ user, token });
 };
+
+
+// ----------------------------- Login   -------------------------------- \\
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -38,37 +33,42 @@ const login = async (req, res) => {
     throw new CustomError(
       "Please provide email and password",
       StatusCodes.BAD_REQUEST
-    );
-  const user = await User.findOne({ email: email });
-  if (!user)
-    throw new CustomError(
-      "No user available with this email address. ",
-      StatusCodes.UNAUTHORIZED
-    );
+    );  
+    
+  const user = await User.findByCredentails(email, password);
 
-  const passwordMatch = await bcrypt.compare(password, user.password);
-  console.log(passwordMatch);
-  if (!passwordMatch)
-    throw new CustomError(
-      "Invalid credentials. Please enter a valid email and password",
-      StatusCodes.UNAUTHORIZED
-    );
+  const token = await user.generateToken();
 
-  const token = jwt.sign(
-    { userId: user._id, userEmail: user.email, userName: user.name },
-    process.env.JWT_SECRET,
-    { expiresIn: "10d" }
-  );
   res.status(StatusCodes.OK).json({ user, token });
 };
 
+// ------------------------ Logout --------------------------------
+
+const logout = async (req, res) => {
+  req.user.tokens = req.user.tokens.filter(token => token.token !== req.token);
+  await req.user.save();
+  res.status(200).send({msg : "Successfully logged out"})
+
+};
+
+
+// ------------------------ Logout from all device  --------------------------------
+
+ const logoutFromAll = async (req, res) => {
+  req.user.tokens = []
+  await req.user.save();
+  res.status(200).send({msg : "Successfully logged out from all devices"})
+
+};
+
+
+// ------------------------ Dashboard --------------------------------
 const dashboard = async (req, res) => {
   const luckyNumber = Math.round(Math.random() * 99);
-  console.log(req.user);
   res.status(200).json({
-    msg: `Hello ${req.user.userName}, login successfull with email address ${req.user.userEmail}. `,
+    msg: `Hello ${req.user.name}, login successfull with email address ${req.user.email}. `,
     secret: `Here is your secret number ${luckyNumber}`,
   });
 };
 
-module.exports = { login, dashboard, register };
+module.exports = { login, dashboard, register, logout, logoutFromAll};

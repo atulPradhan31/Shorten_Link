@@ -26,7 +26,7 @@ const createLink = async (req, res) => {
 
   let isIdUnique = true;
   let urlId = true;
-
+  
   while (isIdUnique) {
     urlId = new ShortUniqueId({ length: 7 })();
     isIdUnique = await Links.findOne({ urlId });

@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
-
+const CustomError = require("../errors/custom-error");
+const bcrypt = require("bcryptjs");
+const jwt = require('jsonwebtoken')
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -17,7 +19,7 @@ const UserSchema = new mongoose.Schema({
     maxLength: 50,
     unique: [
       true,
-      "This email address is already taken. Please provide unique email address",
+      "This email address is already in use. Please provide unique email address",
     ],
   },
   password: {
@@ -25,6 +27,56 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide user password"],
     minLength: 6,
   },
+  tokens : [{
+    token : {
+      type: String,
+      required: true
+    }
+  }]
 });
 
-module.exports = mongoose.model("UsersData", UserSchema);
+UserSchema.methods.toJSON = function () {
+  const user = this
+  const userObject = user.toObject();
+  delete userObject.password;
+  delete userObject.tokens
+  return userObject
+}
+
+UserSchema.pre('save', async function (){
+  const user = this;
+  if(user.isModified('password')){
+    user.password = await bcrypt.hash(user.password, 8)
+  }
+})
+
+UserSchema.statics.findByCredentails = async (email, password) => {
+
+  const user = await UsersData.findOne({ email })
+  if (!user)
+    throw new CustomError('Email Not Found', 404);
+
+  const checkPassworMatch = await bcrypt.compare(password, user.password)
+  if (!checkPassworMatch) {
+    throw new Error('Invalid Password')
+  }
+  return user;
+}
+
+UserSchema.methods.generateToken = async function () {
+  const user = this
+  const token = jwt.sign(
+    { userId: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: "10d" }
+  );
+
+  user.tokens = user.tokens.concat({
+    token
+  })
+  await user.save()
+  return token
+}
+
+const UsersData =  mongoose.model("UsersData", UserSchema);
+module.exports = UsersData;
