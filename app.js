@@ -13,12 +13,13 @@ app.use(express.json());
 
 const userRouter = require("./routes/userRouter");
 const publicRouter = require("./routes/publicRouter");
+const authRouter = require("./routes/authRouter");
 
 app.use("/user", userRouter);
 app.use("/", publicRouter);
+app.use("/accounts", authRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
-
-app.listen(port, () => console.log("Server is up at ", port))
+app.listen(port, () => console.log("Server is up at ", port));

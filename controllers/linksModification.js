@@ -14,12 +14,11 @@ const getLinks = async (req, res) => {
       "Could not get all the data. Please try again later",
       StatusCodes.INTERNAL_SERVER_ERROR
     );
-  res.status(StatusCodes.OK).json(allLinks);
+  res.status(StatusCodes.CREATED).json(allLinks);
 };
 
 // Create a new entry
 const createLink = async (req, res) => {
-
   const origUrl = req.body.originalUrl;
 
   if (!origUrl || !isValidURL(origUrl))
@@ -30,7 +29,7 @@ const createLink = async (req, res) => {
 
   while (isIdUnique) {
     urlId = new ShortUniqueId({ length: 7 })();
-    isIdUnique = await Links.findOne({ urlId })
+    isIdUnique = await Links.findOne({ urlId });
   }
   req.body.urlId = urlId;
 
@@ -45,7 +44,6 @@ const createLink = async (req, res) => {
   res.status(StatusCodes.CREATED).json(entry);
 };
 
-
 // Update the existing entry with new data
 const updateLink = async (req, res) => {
   const urlId = req.params.id;
@@ -56,8 +54,6 @@ const updateLink = async (req, res) => {
       "Data entry incomplete. Please enter complete data. ",
       StatusCodes.BAD_REQUEST
     );
-
-
 
   if (!isValidURL(newUrl))
     throw new CustomError("Please enter valid URL", StatusCodes.BAD_REQUEST);
