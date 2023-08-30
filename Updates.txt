@@ -1,5 +1,14 @@
 Please add all your chances here 
 
+30-08
+----------------------------------------------------------------
+- profile data
+- welcome email on signup
+- temporary password // partial done
+- config file
+
+
+
 
 27-08
 ----------------------------------------------------------------
