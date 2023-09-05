@@ -6,6 +6,8 @@ const freelyEmail = require("freely-email");
 const WelcomeEmailTemplate = require("../template/Welcome");
 const ForgetPassword = require("../template/ForgetPassword");
 const { APP_NAME, APP_EMAIL, APP_DOMAIN } = require("../config");
+const randomKey = require("random-key");
+const bcrypt = require("bcryptjs");
 
 const sendWelcomeEmail = async (name, email) => {
   try {
@@ -119,14 +121,17 @@ const forgetPasswordRequest = async (req, res) => {
   const { email } = req.body;
   if (!email) throw new CustomError("Enter Valid Email Address", 404);
 
-  const luckyNumber = Math.round(Math.random() * 99999);
-  const user = await User.findOne({ email });
+  const tempPassword = randomKey.generate(10);
+  const newHashedPassword = await bcrypt.hash(tempPassword, 8);
+
+  const user = await User.findOneAndUpdate(
+    { email },
+    { password: newHashedPassword },
+    { new: true, runValidators: true }
+  );
   if (!user) throw new CustomError("User not found", 404);
 
-  const resetLink =
-    APP_DOMAIN + "user/forget/password/" + user._id + luckyNumber;
-
-  const msg = await sendForgetPassword(email, resetLink);
+  const msg = await sendForgetPassword(email, tempPassword);
   console.log(msg);
   res.status(200).send({ msg });
 };

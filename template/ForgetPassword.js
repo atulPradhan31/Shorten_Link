@@ -55,10 +55,8 @@ module.exports = template = (link) => {
           <h1>Forgot Password</h1>
           <p>Hello,</p>
           <p>We received a request to reset your password. If you did not make this request, you can safely ignore this email.</p>
-          <p>To reset your password, please click the following link:</p>
-          <p style="text-align: center;">
-            <a href=${link} class="reset-button">Reset Password</a>
-          </p>
+          <p>To reset your password, please use the password sent below:</p>
+          <p style="text-align: center;" class="reset-button">${link} </p>
           <p class="footer">If you have any questions, please contact our support team.</p>
         </div>
       </body>
