@@ -3,7 +3,7 @@ const User = require("../models/user");
 const CustomError = require("../errors/custom-error");
 const { StatusCodes } = require("http-status-codes");
 const freelyEmail = require("freely-email");
-const WelcomeEmailTemplate = require("../template/Welcome");
+const WelcomeEmailTemplate = require("../template/WelcomeEmail");
 const ForgetPassword = require("../template/ForgetPassword");
 const { APP_NAME, APP_EMAIL, APP_DOMAIN } = require("../config");
 const randomKey = require("random-key");
@@ -58,9 +58,9 @@ const register = async (req, res) => {
       StatusCodes.INTERNAL_SERVER_ERROR
     );
   const token = await user.generateToken();
-  console.log(token);
+
   const mailSender = await sendWelcomeEmail(user.name, user.email);
-  console.log(mailSender);
+
   res.status(200).json({ user, token });
 };
 
@@ -116,10 +116,10 @@ const dashboard = async (req, res) => {
   });
 };
 
-// ------------------------ Dashboard --------------------------------
+// ------------------------ Forget password --------------------------------
 const forgetPasswordRequest = async (req, res) => {
   const { email } = req.body;
-  if (!email) throw new CustomError("Enter Valid Email Address", 404);
+  if (!email) throw new CustomError("Enter Valid Email Address", 400);
 
   const tempPassword = randomKey.generate(10);
   const newHashedPassword = await bcrypt.hash(tempPassword, 8);
@@ -132,8 +132,22 @@ const forgetPasswordRequest = async (req, res) => {
   if (!user) throw new CustomError("User not found", 404);
 
   const msg = await sendForgetPassword(email, tempPassword);
-  console.log(msg);
+
   res.status(200).send({ msg });
+};
+
+// ------------------------ Update password --------------------------------
+const updatePasswordRequest = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) throw new CustomError("Enter valid data", 400);
+
+  const checkPassworMatch = await bcrypt.compare(oldPassword, req.user.password)
+  if (!checkPassworMatch) throw new CustomError("Invalid password", 400);
+
+  req.user.password = newPassword 
+  await req.user.save();
+  res.status(200).send({ msg: "Password changed successfully" });
 };
 
 module.exports = {
@@ -144,4 +158,5 @@ module.exports = {
   logoutFromAll,
   profile,
   forgetPasswordRequest,
+  updatePasswordRequest
 };

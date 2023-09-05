@@ -8,6 +8,7 @@ const {
   logoutFromAll,
   profile,
   forgetPasswordRequest,
+  updatePasswordRequest,
 } = require("../controllers/user-auth");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -18,5 +19,6 @@ router.get("/logout/all", authMiddleware, logoutFromAll);
 router.get("/dashboard", authMiddleware, dashboard);
 router.get("/profile", authMiddleware, profile);
 router.post("/forget/password", forgetPasswordRequest);
+router.post("/update/password", authMiddleware, updatePasswordRequest);
 
 module.exports = router;

@@ -2,6 +2,12 @@ Please add all your changes here
 
 05-09
 ------------------------
+Added Update password 
+update welcome templete, forget password templete : please try one :)
+
+
+05-09
+------------------------
 Added changes to support 'Forget Password'
 
 
