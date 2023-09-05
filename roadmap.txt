@@ -22,7 +22,7 @@
 ``````````  DashBord Design for user `````````````
 ----------------------------------------------------------------
 
-1. View all the Links created by User
+1. View all the Links created by User -> Virtual in mongoose
 2. View all the Link Data: ( eg : Number of clicks on perticular link)
 3. Option to update desired Link Name : ( update UUID )
 4. Option to delete link

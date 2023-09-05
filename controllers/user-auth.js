@@ -8,7 +8,6 @@ const ForgetPassword = require("../template/ForgetPassword");
 const { APP_NAME, APP_EMAIL, APP_DOMAIN } = require("../config");
 
 const sendWelcomeEmail = async (name, email) => {
- 
   try {
     const emailBody = {
       recipient: email, //  use Array of String for multiple email
@@ -25,7 +24,7 @@ const sendWelcomeEmail = async (name, email) => {
   }
 };
 
-const sendForgetPassword  = async (email, link) => {
+const sendForgetPassword = async (email, link) => {
   try {
     const emailBody = {
       recipient: email, //  use Array of String for multiple email
@@ -43,7 +42,6 @@ const sendForgetPassword  = async (email, link) => {
 };
 
 const register = async (req, res) => {
- 
   const { name, email, password } = req.body;
   if (!name || !email || !password)
     throw new CustomError(
@@ -57,7 +55,8 @@ const register = async (req, res) => {
       "Could not creat user entry. Please try again later",
       StatusCodes.INTERNAL_SERVER_ERROR
     );
-  const token = user.generateToken();
+  const token = await user.generateToken();
+  console.log(token);
   const mailSender = await sendWelcomeEmail(user.name, user.email);
   console.log(mailSender);
   res.status(200).json({ user, token });
@@ -106,7 +105,6 @@ const profile = async (req, res) => {
   });
 };
 
-
 // ------------------------ Dashboard --------------------------------
 const dashboard = async (req, res) => {
   const luckyNumber = Math.round(Math.random() * 99);
@@ -116,28 +114,22 @@ const dashboard = async (req, res) => {
   });
 };
 
-
-
 // ------------------------ Dashboard --------------------------------
 const forgetPasswordRequest = async (req, res) => {
-  const {email } = req.body;
-  if(!email) 
-    throw new CustomError("Enter Valid Email Address", 404);
+  const { email } = req.body;
+  if (!email) throw new CustomError("Enter Valid Email Address", 404);
 
   const luckyNumber = Math.round(Math.random() * 99999);
-  const user = await User.findOne({email});
-  if(!user)
-    throw new CustomError("User not found", 404);
+  const user = await User.findOne({ email });
+  if (!user) throw new CustomError("User not found", 404);
 
-  const resetLink = APP_DOMAIN+'user/forget/password/'+user._id+luckyNumber;
+  const resetLink =
+    APP_DOMAIN + "user/forget/password/" + user._id + luckyNumber;
 
   const msg = await sendForgetPassword(email, resetLink);
   console.log(msg);
-  res.status(200).send({msg})
-
+  res.status(200).send({ msg });
 };
-
-
 
 module.exports = {
   login,
