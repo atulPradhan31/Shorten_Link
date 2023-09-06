@@ -3,10 +3,7 @@ const CustomError = require("../errors/custom-error");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const UserSchema = new mongoose.Schema({
-  link_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Links",
-  },
+
   name: {
     type: String,
     required: [true, "Please provide user name"],
@@ -40,6 +37,14 @@ const UserSchema = new mongoose.Schema({
     },
   ],
 });
+
+
+
+UserSchema.virtual('MyLinks', {
+  ref : 'Links',
+  localField : '_id',
+  foreignField : 'user_id',
+})
 
 UserSchema.methods.toJSON = function () {
   const user = this;

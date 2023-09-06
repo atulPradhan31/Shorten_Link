@@ -5,16 +5,14 @@ const ShortUniqueId = require("short-unique-id");
 const isValidURL = require("../modules/validation");
 
 const { StatusCodes } = require("http-status-codes");
+const UsersData = require("../models/user");
 
 // Get all the links objects
 const getLinks = async (req, res) => {
-  const allLinks = await Links.find();
-  if (!allLinks)
-    throw new CustomError(
-      "Could not get all the data. Please try again later",
-      StatusCodes.INTERNAL_SERVER_ERROR
-    );
-  res.status(StatusCodes.CREATED).json(allLinks);
+
+  const user = await UsersData.findById(req.user._id).populate('MyLinks').exec();
+  res.status(StatusCodes.OK).json({msg : user.MyLinks});
+
 };
 
 // Create a new entry
@@ -33,7 +31,6 @@ const createLink = async (req, res) => {
   }
   req.body.urlId = urlId;
   req.body.user_id = req.user._id;
-
   const entry = await Links.create(req.body);
 
   if (!entry)
@@ -47,7 +44,7 @@ const createLink = async (req, res) => {
 
 // Update the existing entry with new data
 const updateLink = async (req, res) => {
-  const urlId = req.params.id;
+  const urlId = req.body.urlId;
   const newUrl = req.body.originalUrl;
 
   if (!urlId || !newUrl)
@@ -62,6 +59,36 @@ const updateLink = async (req, res) => {
   let urlObj = await Links.findOneAndUpdate(
     { urlId: urlId },
     { originalUrl: newUrl },
+    { new: true, runValidators: true }
+  );
+
+  if (!urlObj)
+    throw new CustomError(
+      `Could not update the entry with the id ${urlId}. Please try again later!`,
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  res.status(StatusCodes.OK).json(urlObj);
+};
+
+// Update the existing url with new data
+const updateUrlId = async (req, res) => {
+  const urlId = req.body.urlId;
+  const newUrlId = req.body.newUrlId;
+
+  if (!urlId || !newUrlId)
+    throw new CustomError(
+      "Data entry incomplete. Please enter complete data. ",
+      StatusCodes.BAD_REQUEST
+    );
+
+  const isUrlExist = await Links.findOne({urlId: newUrlId});
+  console.log(isUrlExist);
+  if(isUrlExist)
+      throw new CustomError(`URL Id already exists.`, StatusCodes.BAD_REQUEST);
+
+  let urlObj = await Links.findOneAndUpdate(
+    { urlId },
+    { urlId: newUrlId },
     { new: true, runValidators: true }
   );
 
@@ -101,4 +128,5 @@ module.exports = {
   createLink,
   updateLink,
   removeLink,
+  updateUrlId
 };
