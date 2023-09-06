@@ -1,8 +1,12 @@
 const mongoose = require("mongoose");
 const CustomError = require("../errors/custom-error");
 const bcrypt = require("bcryptjs");
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 const UserSchema = new mongoose.Schema({
+  link_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Links",
+  },
   name: {
     type: String,
     required: [true, "Please provide user name"],
@@ -27,56 +31,54 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide user password"],
     minLength: 6,
   },
-  tokens : [{
-    token : {
-      type: String,
-      required: true
-    }
-  }]
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
 
 UserSchema.methods.toJSON = function () {
-  const user = this
+  const user = this;
   const userObject = user.toObject();
   delete userObject.password;
-  delete userObject.tokens
-  return userObject
-}
+  delete userObject.tokens;
+  return userObject;
+};
 
-UserSchema.pre('save', async function (){
+UserSchema.pre("save", async function () {
   const user = this;
-  if(user.isModified('password')){
-    user.password = await bcrypt.hash(user.password, 8)
+  if (user.isModified("password")) {
+    user.password = await bcrypt.hash(user.password, 8);
   }
-})
+});
 
 UserSchema.statics.findByCredentails = async (email, password) => {
+  const user = await UsersData.findOne({ email });
+  if (!user) throw new CustomError("Email Not Found", 404);
 
-  const user = await UsersData.findOne({ email })
-  if (!user)
-    throw new CustomError('Email Not Found', 404);
-
-  const checkPassworMatch = await bcrypt.compare(password, user.password)
+  const checkPassworMatch = await bcrypt.compare(password, user.password);
   if (!checkPassworMatch) {
-    throw new Error('Invalid Password')
+    throw new Error("Invalid Password");
   }
   return user;
-}
+};
 
 UserSchema.methods.generateToken = async function () {
-  const user = this
-  const token = jwt.sign(
-    { userId: user._id },
-    process.env.JWT_SECRET,
-    { expiresIn: "10d" }
-  );
+  const user = this;
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "10d",
+  });
 
   user.tokens = user.tokens.concat({
-    token
-  })
-  await user.save()
-  return token
-}
+    token,
+  });
+  await user.save();
+  return token;
+};
 
-const UsersData =  mongoose.model("UsersData", UserSchema);
+const UsersData = mongoose.model("Users", UserSchema);
 module.exports = UsersData;

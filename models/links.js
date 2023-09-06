@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const LinksSchema = new mongoose.Schema(
   {
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
+    },
+
     originalUrl: {
       type: String,
       required: [true, "Please provide the original url"],
@@ -21,23 +26,22 @@ const LinksSchema = new mongoose.Schema(
       required: [true, "Please provide the unique url id"],
       unique: true,
     },
-    click : {
-      type : Number,
-      default : 0
-    }
+    click: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
 
-LinksSchema.post('findOne', async function(doc, next){
-  
+LinksSchema.post("findOne", async function (doc, next) {
   if (doc !== null) {
     doc.click += 1;
     await doc.save();
   }
-  
-  next();
-})
 
-const Links  = mongoose.model("Links", LinksSchema);
-module.exports = Links
+  next();
+});
+
+const Links = mongoose.model("Links", LinksSchema);
+module.exports = Links;
