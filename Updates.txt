@@ -1,0 +1,53 @@
+Please add all your changes here 
+
+05-09
+------------------------
+Added Update password 
+update welcome templete, forget password templete : please try one :)
+
+
+05-09
+------------------------
+Added changes to support 'Forget Password'
+
+
+30-08
+----------------------------------------------------------------
+- profile data
+- welcome email on signup
+- temporary password // partial done
+- config file
+
+
+
+
+27-08
+----------------------------------------------------------------
+- Refactor User Sign in Method
+- Added extra tokens field : ( This is used to check, weather the current token is login or not )
+- Added extra click field to links modal
+- Added logout and logout all
+- update authMiddleware 
+
+
+27-08
+---------------------------------------------------------
+- Added a route for Login, Register
+- Added function for login, register and dashboard
+- Added user data to database
+
+---------------------------------------------------------
+26-08
+-------
+- Update Port number ( please change accoding to yours )
+- update AppJs ( Changed route to /user from /homepage, migrate connectDB code to ConnectDB.js )
+- update connectDB
+- update linkRoutes
+    - delete getLink as it now migrate to userRoute
+    - Changed createLink 
+- update link model
+    - comment required for shortend link ( Because we are anyway going to find using Uid that is already present? whats your thought? )
+
+- Add new route userRoute ( Will handle all redirects links )
+
+
