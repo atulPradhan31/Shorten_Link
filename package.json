@@ -4,12 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-<<<<<<< HEAD
-    "start": "node --watch app.js"
-=======
     "start": "nodemon app.js",
     "dev": "node --watch app.js"
->>>>>>> origin/master
   },
   "author": "Atul Pradhan, Harshit Keshari",
   "license": "ISC",

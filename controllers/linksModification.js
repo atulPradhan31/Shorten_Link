@@ -1,19 +1,6 @@
 require("dotenv").config();
 const Links = require("../models/links");
 const CustomError = require("../errors/custom-error");
-<<<<<<< HEAD
-const {StatusCodes} = require('http-status-codes')
-
-// Get all the links objects
-const getLinks = async (req, res) => {
-  const allLinks = await Links.find();
-  if (!allLinks)
-    throw new CustomError(
-      "Could not get all the data. Please try again later",
-      StatusCodes.INTERNAL_SERVER_ERROR
-    );
-  res.status(200).json(allLinks);
-=======
 const ShortUniqueId = require("short-unique-id");
 const isValidURL = require("../modules/validation");
 
@@ -26,7 +13,6 @@ const getLinks = async (req, res) => {
   const user = await UsersData.findById(req.user._id).populate('MyLinks').exec();
   res.status(StatusCodes.OK).json({msg : user.MyLinks});
 
->>>>>>> origin/master
 };
 
 // Create a new entry
@@ -56,19 +42,10 @@ const createLink = async (req, res) => {
   res.status(StatusCodes.CREATED).json(entry);
 };
 
-<<<<<<< HEAD
-// Lookup the specific data
-const getLink = async (req, res) => {
-  const linkID = req.params.id;
-  
-  if (!linkID)
-    throw new CustomError("No object ID defined.", 404);
-=======
 // Update the existing entry with new data
 const updateLink = async (req, res) => {
   const urlId = req.body.urlId;
   const newUrl = req.body.originalUrl;
->>>>>>> origin/master
 
   if (!urlId || !newUrl)
     throw new CustomError(
