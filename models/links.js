@@ -4,7 +4,7 @@ const LinksSchema = new mongoose.Schema(
   {
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
-      required : true,
+      required: true,
     },
 
     originalUrl: {
@@ -24,6 +24,10 @@ const LinksSchema = new mongoose.Schema(
     click: {
       type: Number,
       default: 0,
+    },
+    options: {
+      type: Object,
+      required : false,
     },
   },
   { timestamps: true }
