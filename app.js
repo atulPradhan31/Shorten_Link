@@ -4,8 +4,9 @@ const express = require("express");
 const connectDB = require("./db/connect");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 const notFoundMiddleware = require("./middleware/not-found");
+const cors = require('cors');
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 connectDB();
 
 app.use(express.json());
@@ -15,10 +16,13 @@ const publicRouter = require("./routes/publicRouter");
 const authRouter = require("./routes/authRouter");
 const clientRouter = require("./routes/clientRouter");
 
+app.use(cors());
+
 app.use("/", publicRouter);
 app.use("/user", userRouter);
 app.use("/accounts", authRouter);
 app.use("/client", clientRouter);
+
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

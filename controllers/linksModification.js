@@ -12,7 +12,7 @@ const getLinks = async (req, res) => {
   const user = await UsersData.findById(req.user._id)
     .populate("MyLinks")
     .exec();
-  res.status(StatusCodes.OK).json({ msg: user.MyLinks });
+  res.status(StatusCodes.OK).json({ message: user.MyLinks });
 };
 
 /* -------------------------------------------------------------------------- */

@@ -89,7 +89,7 @@ const logout = async (req, res) => {
     (token) => token.token !== req.token
   );
   await req.user.save();
-  res.status(200).send({ msg: "Successfully logged out" });
+  res.status(200).send({ message: "Successfully logged out" });
 };
 
 // ------------------------ Logout from all device  --------------------------------
@@ -97,13 +97,13 @@ const logout = async (req, res) => {
 const logoutFromAll = async (req, res) => {
   req.user.tokens = [];
   await req.user.save();
-  res.status(200).send({ msg: "Successfully logged out from all devices" });
+  res.status(200).send({ message: "Successfully logged out from all devices" });
 };
 
 // ------------------------ profile --------------------------------
 const profile = async (req, res) => {
   res.status(200).json({
-    msg: req.user,
+    message: req.user,
   });
 };
 
@@ -111,7 +111,7 @@ const profile = async (req, res) => {
 const dashboard = async (req, res) => {
   const luckyNumber = Math.round(Math.random() * 99);
   res.status(200).json({
-    msg: `Hello ${req.user.name}, login successfull with email address ${req.user.email}. `,
+    message: `Hello ${req.user.name}, login successfull with email address ${req.user.email}. `,
     secret: `Here is your secret number ${luckyNumber}`,
   });
 };
@@ -131,9 +131,9 @@ const forgetPasswordRequest = async (req, res) => {
   );
   if (!user) throw new CustomError("User not found", 404);
 
-  const msg = await sendForgetPassword(email, tempPassword);
+  const message = await sendForgetPassword(email, tempPassword);
 
-  res.status(200).send({ msg });
+  res.status(200).send({ message });
 };
 
 // ------------------------ Update password --------------------------------
@@ -147,7 +147,7 @@ const updatePasswordRequest = async (req, res) => {
 
   req.user.password = newPassword 
   await req.user.save();
-  res.status(200).send({ msg: "Password changed successfully" });
+  res.status(200).send({ message: "Password changed successfully" });
 };
 
 module.exports = {

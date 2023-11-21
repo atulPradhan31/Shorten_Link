@@ -26,7 +26,7 @@ const authHandlerMiddleware = async (req, res, next) => {
     const myToken = user.tokens.filter((t) => t.token === token);
     if (myToken.length === 0)
       throw new CustomError(
-        "Harshit, you are Not authorised to access this route",
+        "Hey, you are Not authorised to access this route",
         StatusCodes.UNAUTHORIZED
       );
     req.user = user;
