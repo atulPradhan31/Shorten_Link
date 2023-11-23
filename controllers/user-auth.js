@@ -61,7 +61,7 @@ const register = async (req, res) => {
 
   const mailSender = await sendWelcomeEmail(user.name, user.email);
 
-  res.status(200).json({ user, token });
+  res.status(200).json({ message  : { user, token }});
 };
 
 // ----------------------------- Login   -------------------------------- \\
@@ -79,7 +79,7 @@ const login = async (req, res) => {
 
   const token = await user.generateToken();
 
-  res.status(StatusCodes.OK).json({ user, token });
+  res.status(StatusCodes.OK).json({message  :{ user, token }});
 };
 
 // ------------------------ Logout --------------------------------

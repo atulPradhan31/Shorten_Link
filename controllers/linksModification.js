@@ -3,9 +3,12 @@ const Links = require("../models/links");
 const CustomError = require("../errors/custom-error");
 const ShortUniqueId = require("short-unique-id");
 const isValidURL = require("../modules/validation");
-const { handleCreateNewLink }  = require('../controllers/linksHandler.js')
+const { handleCreateNewLink } = require('../controllers/linksHandler.js')
 const { StatusCodes } = require("http-status-codes");
 const UsersData = require("../models/user");
+
+
+
 
 // Get all the links objects
 const getLinks = async (req, res) => {
@@ -16,7 +19,7 @@ const getLinks = async (req, res) => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                            // Create a new entry                           */
+/*                             Create a new entry                           */
 /* -------------------------------------------------------------------------- */
 
 
@@ -31,8 +34,8 @@ const createLink = async (req, res) => {
       "Could not create the entry. Please try again later",
       StatusCodes.INTERNAL_SERVER_ERROR
     );
-  res.status(StatusCodes.CREATED).json(entry);
-  
+  res.status(StatusCodes.CREATED).json({ message: entry });
+
 };
 
 // Update the existing entry with new data
@@ -60,7 +63,7 @@ const updateLink = async (req, res) => {
       `Could not update the entry with the id ${urlId}. Please try again later!`,
       StatusCodes.INTERNAL_SERVER_ERROR
     );
-  res.status(StatusCodes.OK).json(urlObj);
+  res.status(StatusCodes.OK).json({ message: urlObj });
 };
 
 // Update the existing url with new data
@@ -90,7 +93,7 @@ const updateUrlId = async (req, res) => {
       `Could not update the entry with the id ${urlId}. Please try again later!`,
       StatusCodes.INTERNAL_SERVER_ERROR
     );
-  res.status(StatusCodes.OK).json(urlObj);
+  res.status(StatusCodes.OK).json({ message: urlObj });
 };
 
 // Lookup and delete the entry corresponding to the requested object Id.
@@ -111,9 +114,10 @@ const removeLink = async (req, res) => {
     );
   res
     .status(StatusCodes.ACCEPTED)
-    .json(
-      `Removed the entry with original url ${urlObj.originalUrl} and short url ${urlObj.shortenedUrl}}`
-    );
+    .json({
+      message:
+        `Removed the entry with original url ${urlObj.originalUrl} and short url ${urlObj.shortenedUrl}}`
+    });
 };
 
 module.exports = {

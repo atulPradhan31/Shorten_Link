@@ -22,6 +22,7 @@ app.use("/", publicRouter);
 app.use("/user", userRouter);
 app.use("/accounts", authRouter);
 app.use("/client", clientRouter);
+
 app.use("/startserver",(req, res) => {
     res.status(200).send({message : "Server started"})
 })

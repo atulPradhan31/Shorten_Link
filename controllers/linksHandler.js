@@ -7,6 +7,7 @@ const { StatusCodes } = require("http-status-codes");
 
  async function handleCreateNewLink(req) {
   const originalUrl = req.body.originalUrl;
+  console.log(req.body);
   if (!originalUrl || !isValidURL(originalUrl))
     throw new CustomError("Please enter valid URL", StatusCodes.BAD_REQUEST);
 

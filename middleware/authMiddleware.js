@@ -12,6 +12,7 @@ const authHandlerMiddleware = async (req, res, next) => {
 
   const token = authorization.split(" ")[1];
 
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -26,7 +27,7 @@ const authHandlerMiddleware = async (req, res, next) => {
     const myToken = user.tokens.filter((t) => t.token === token);
     if (myToken.length === 0)
       throw new CustomError(
-        "Hey, you are Not authorised to access this route",
+        "you are not authorised to access this route",
         StatusCodes.UNAUTHORIZED
       );
     req.user = user;

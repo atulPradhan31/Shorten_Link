@@ -38,7 +38,6 @@ LinksSchema.post("findOne", async function (doc, next) {
     doc.click += 1;
     await doc.save();
   }
-
   next();
 });
 

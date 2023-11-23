@@ -37,9 +37,11 @@ router.get("/create", authMiddleware, async (req, res) => {
     createdClient.clientId = createdClient._id;
     await createdClient.save();
     res.status(201).send({
-      message: "congratulations!, You are now a developer",
-      clientId: createdClient._id,
-      clientPasscode,
+      message: {
+        message: "congratulations!, You are now a developer",
+        clientId: createdClient._id,
+        clientPasscode,
+      }
     });
   } catch (error) {
     throw new CustomError(error.message);
@@ -65,10 +67,10 @@ router.post("/create/token", authMiddleware, async (req, res) => {
     await createdClientToken.save();
     console.log(createdClientToken);
 
-    res.status(201).send({
+    res.status(201).send({message  :{
       message: "Token created",
       token: oneTimeToken,
-    });
+    }});
   } catch (error) {
     throw new CustomError(error.message);
   }
@@ -83,15 +85,15 @@ router.post("/create/link", clientMiddleware, async (req, res) => {
   try {
     const dataToCreateLink = await handleCreateNewLink(req);
     dataToCreateLink.user_id = req.client._id;
-    const  options  = req.body.options
+    const options = req.body.options
 
-    const entry = await Links.create({...dataToCreateLink, options});
+    const entry = await Links.create({ ...dataToCreateLink, options });
     if (!entry)
       throw new CustomError(
         "Could not create the entry. Please try again later",
         StatusCodes.INTERNAL_SERVER_ERROR
       );
-    res.status(StatusCodes.CREATED).json(entry);
+    res.status(StatusCodes.CREATED).json({message  :entry});
   } catch (error) {
     throw new CustomError(error.message);
   }
