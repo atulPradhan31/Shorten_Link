@@ -2,7 +2,7 @@
  const APP_NAME = "MyLinkify";
  const APP_EMAIL = "babumoshai.yogi@gmail.com";
  const APP_SUPPORT_EMAIL = "babumoshai.yogi@gmail.com";
- const APP_DOMAIN = "https://localhost:3000/";
+ const APP_DOMAIN = "https://trimurl.online/";
 
  module.exports = {
    APP_DOMAIN,
