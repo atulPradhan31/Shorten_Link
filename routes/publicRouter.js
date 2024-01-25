@@ -15,4 +15,10 @@ router.get('/:id', async(req, res) => {
 
 })
 
+router.get('/', async(req, res) => {
+    
+    res.status(302).redirect("https://trimurl.online");
+
+})
+
 module.exports = router
