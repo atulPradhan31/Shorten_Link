@@ -17,7 +17,7 @@ router.get('/:id', async(req, res) => {
 
 router.get('/', async(req, res) => {
     
-    res.status(302).redirect("https://trimurl.online");
+    res.status(302).redirect("https://dashboard.trimurl.online");
 
 })
 
