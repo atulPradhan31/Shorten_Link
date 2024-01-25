@@ -1,5 +1,6 @@
 require("express-async-errors");
 
+const cors = require("cors");
 const express = require("express");
 const connectDB = require("./db/connect");
 const errorHandlerMiddleware = require("./middleware/error-handler");
@@ -10,6 +11,7 @@ const port = process.env.PORT || 3000;
 connectDB();
 
 app.use(express.json());
+app.use(cors());
 
 const userRouter = require("./routes/userRouter");
 const publicRouter = require("./routes/publicRouter");
