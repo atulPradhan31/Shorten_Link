@@ -93,6 +93,43 @@ const runLinkServiceTests = async () => {
     assert.ok(threw);
   });
 
+  // 7. Update originalUrl only (preserves short alias)
+  await testAsync("updates originalUrl while keeping the short alias unchanged", async () => {
+    const updated = await linkService.updateLink(autoLink.id, userId, {
+      originalUrl: "https://newdestination.com/docs",
+    });
+    assert.strictEqual(updated.originalUrl, "https://newdestination.com/docs");
+    assert.strictEqual(updated.urlId, autoLink.urlId); // alias preserved
+  });
+
+  // 8. Reject invalid destination URL on update
+  await testAsync("rejects invalid destination URL format on update", async () => {
+    let threw = false;
+    try {
+      await linkService.updateLink(autoLink.id, userId, {
+        originalUrl: "not-a-valid-url",
+      });
+    } catch (err) {
+      threw = true;
+      assert.strictEqual(err.statusCode, 400);
+    }
+    assert.ok(threw);
+  });
+
+  // 9. Prevent non-owners from editing link
+  await testAsync("prevents non-owners from editing a link", async () => {
+    let threw = false;
+    try {
+      await linkService.updateLink(autoLink.id, "different-user-456", {
+        originalUrl: "https://validurl.com",
+      });
+    } catch (err) {
+      threw = true;
+      assert.strictEqual(err.statusCode, 404);
+    }
+    assert.ok(threw);
+  });
+
   return { passed, total };
 };
 

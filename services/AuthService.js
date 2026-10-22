@@ -33,7 +33,9 @@ class AuthService {
         message: `Welcome ${name}! Thank you for joining ${APP_NAME}.`,
         HTMLfile: WelcomeEmailTemplate(APP_DOMAIN || "https://trimurl.online", name),
       };
-      return await freelyEmail.sendEmail(emailBody);
+      const result = await freelyEmail.sendEmail(emailBody);
+      console.log(`[FreelyEmail] Welcome email sent to ${email}:`, result?.message || "Success");
+      return result;
     } catch (error) {
       console.error("Welcome email failed to send (non-fatal):", error.message);
       return null;
